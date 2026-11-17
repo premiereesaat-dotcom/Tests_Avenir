@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Test d'orientation – 1re STD2A</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{--ink:#1D1F3B;--verm:#D94A22;--teal:#117F7D;--yel:#F6C12F;--gold:#B8860B;--light:#F1F2F6;--muted:#4F546E;--line:#DADCE8}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Lexend,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:var(--light);font-size:18px;line-height:1.5}
+  .wrap{max-width:860px;margin:0 auto;padding:24px 18px 60px}
+  header.top{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+  .dot{width:16px;height:16px;border-radius:50%;display:inline-block}
+  .brand{font-weight:700;letter-spacing:.04em;font-size:15px;color:var(--muted);text-transform:uppercase}
+  .card{background:#fff;border-radius:18px;padding:32px;box-shadow:0 2px 14px rgba(29,31,59,.07)}
+  h1{font-size:32px;line-height:1.2;margin:0 0 12px}
+  h2{font-size:24px;margin:0 0 12px}
+  p{margin:0 0 14px}
+  .lead{color:var(--muted)}
+  label.fld{display:block;font-weight:500;margin:14px 0 6px}
+  input[type=text]{width:100%;font:inherit;padding:12px 14px;border:2px solid var(--line);border-radius:12px}
+  input[type=text]:focus{outline:none;border-color:var(--teal)}
+  .row{display:flex;gap:14px;flex-wrap:wrap}
+  .row>div{flex:1 1 240px}
+  button{font:inherit;font-weight:500;border:0;border-radius:12px;padding:13px 22px;cursor:pointer}
+  .btn{background:var(--verm);color:#fff}
+  .btn:hover{filter:brightness(.93)}
+  .btn:disabled{background:#C9CBE0;cursor:not-allowed;filter:none}
+  .ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}
+  .ghost:hover{border-color:var(--ink)}
+  .actions{display:flex;justify-content:space-between;gap:12px;margin-top:26px;flex-wrap:wrap}
+  .info{display:flex;gap:12px;flex-wrap:wrap;margin:18px 0 6px}
+  .chip{background:var(--light);border-radius:999px;padding:6px 14px;font-size:15px;color:var(--muted)}
+  /* question */
+  .prog{display:flex;justify-content:space-between;font-size:15px;color:var(--muted);margin-bottom:8px}
+  .bar{height:10px;background:#fff;border-radius:99px;overflow:hidden;margin-bottom:20px;box-shadow:inset 0 0 0 1px var(--line)}
+  .bar>i{display:block;height:100%;background:var(--teal);width:0;transition:width .3s}
+  .part{font-size:15px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+  .qtext{font-size:23px;font-weight:500;line-height:1.35;margin:0 0 20px}
+  .opts{display:flex;flex-direction:column;gap:12px}
+  .opt{display:flex;gap:14px;align-items:flex-start;text-align:left;background:#fff;border:2px solid var(--line);border-radius:14px;padding:14px 16px;color:var(--ink);font-weight:400;width:100%}
+  .opt:hover{border-color:var(--teal)}
+  .opt .l{flex:0 0 34px;height:34px;border-radius:50%;background:var(--light);display:flex;align-items:center;justify-content:center;font-weight:700}
+  .opt[aria-checked=true]{border-color:var(--teal);background:#E8F5F4}
+  .opt[aria-checked=true] .l{background:var(--teal);color:#fff}
+  .hint{font-size:14px;color:var(--muted);margin-top:14px}
+  /* result */
+  .res-head{background:var(--ink);color:#fff;border-radius:18px;padding:28px 32px;margin-bottom:18px}
+  .res-head .who{color:#C9CBE0;font-size:16px}
+  .res-head h1{margin-top:6px}
+  .tag{display:inline-block;border-radius:999px;padding:6px 14px;font-size:15px;font-weight:700;margin:4px 6px 0 0}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media (max-width:720px){.grid2{grid-template-columns:1fr}.card{padding:22px}.qtext{font-size:20px}}
+  .pole{margin:10px 0}
+  .pole .t{display:flex;justify-content:space-between;font-size:16px;margin-bottom:4px}
+  .pole .tr{height:16px;background:var(--light);border-radius:99px;overflow:hidden}
+  .pole .tr i{display:block;height:100%;border-radius:99px}
+  .scale{display:flex;border-radius:12px;overflow:hidden;margin:12px 0 6px;font-size:14px;font-weight:500;text-align:center}
+  .scale div{flex:1;padding:8px 4px;background:var(--light);color:var(--muted)}
+  .scale div.on{color:#fff}
+  ul.pl{padding-left:20px;margin:6px 0 14px}
+  ul.pl li{margin-bottom:6px}
+  .alert{background:#FDF3D3;border-radius:14px;padding:16px 18px;margin:14px 0}
+  .sec{margin-top:18px}
+  .small{font-size:15px;color:var(--muted)}
+  .msg{margin-top:10px;font-size:15px;color:var(--teal);min-height:22px}
+  @media print{
+    body{background:#fff}
+    .noprint{display:none!important}
+    .card,.res-head{box-shadow:none;break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top noprint">
+    <span class="dot" style="background:var(--verm)"></span><span class="dot" style="background:var(--teal)"></span><span class="dot" style="background:var(--yel)"></span>
+    <span class="brand">1re STD2A · Test d'orientation</span>
+  </header>
+  <main id="app"></main>
+</div>
+
+<script>
+/* ============ DONNÉES ============
+   Pôles : G Graphisme/Image, O Objet/Espace, T Textile/Matériaux, E Événement/Scénographie, R Réorientation (Humain/Commerce/Gestion)
+   Profil (Q25-30) : L = études longues/autonomes, M = profil équilibré, C = études courtes/encadrées
+   Les points ne sont jamais affichés à l'élève. */
+const POLES = {
+  G:{name:"Graphisme / Image", color:"#D94A22"},
+  O:{name:"Objet / Espace", color:"#117F7D"},
+  T:{name:"Textile / Matériaux", color:"#B8860B"},
+  E:{name:"Événement / Scénographie", color:"#1D1F3B"},
+  R:{name:"Humain / Commerce / Gestion", color:"#8A8FA8"}
+};
+const Q = [
+ {q:"Face à un thème de projet libre en arts appliqués, quelle est ta première impulsion pour démarrer ?",o:[
+  ["Chercher des références graphiques, des typographies, des affiches ou des mises en page qui m'inspirent.","G",2],
+  ["Réfléchir immédiatement aux volumes, aux matériaux physiques et à la manière de construire une maquette.","O",2],
+  ["Explorer des échantillons de tissus, des textures tactiles, des nuances de couleurs ou des techniques de tissage/teinture.","T",2],
+  ["Imaginer un parcours, une mise en scène dans l'espace ou une ambiance sonore pour surprendre le public.","E",2],
+  ["Préférer qu'on me donne un cadre très précis et des consignes méthodologiques étape par étape pour ne pas me perdre.","R",2]]},
+ {q:"Dans ton temps libre, quel type de contenu ou de magazine feuillettes-tu le plus volontiers ?",o:[
+  ["Des magazines de design graphique, d'illustration, d'animation numérique ou de culture visuelle.","G",2],
+  ["Des revues d'architecture d'intérieur, de design de mobilier, d'objets connectés ou d'artisanat d'art.","O",2],
+  ["Des magazines de mode, de tendances vestimentaires, de design textile ou de décoration d'intérieur.","T",2],
+  ["Des reportages sur la scénographie d'expositions, l'organisation de festivals, de défilés ou d'événements culturels.","E",2],
+  ["Des articles sur la psychologie, la gestion d'entreprise, l'aide à la personne ou les métiers techniques et commerciaux.","R",2]]},
+ {q:"Quel type d'atelier ou de manipulation, manuelle ou numérique, te procure le plus de plaisir en cours ?",o:[
+  ["Traiter des images sur ordinateur, composer des planches de tendance numériques ou dessiner des logos.","G",2],
+  ["Scier, poncer, modeler, assembler des matériaux bruts ou concevoir des volumes en 3D.","O",2],
+  ["Coudre, broder, teindre, teinter ou manipuler des matières souples et des fibres.","T",2],
+  ["Mettre en espace des éléments, créer des décors éphémères ou coordonner des éléments visuels dans un lieu.","E",2],
+  ["Réaliser des dossiers administratifs propres, des tableaux chiffrés ou organiser l'intendance d'un projet collectif.","R",2]]},
+ {q:"Qu'est-ce qui te frustre le plus lors de la réalisation d'un projet ?",o:[
+  ["Ne pas réussir à trouver la bonne composition typographique ou le bon équilibre visuel 2D.","G",2],
+  ["Que la maquette en volume s'effondre ou que l'assemblage technique ne tienne pas debout.","O",2],
+  ["Que le rendu de la matière, de la couleur ou du tissu ne corresponde pas à ce que j'imaginais au toucher.","T",2],
+  ["Que l'idée globale manque d'impact pour le spectateur ou que l'espace scénique soit mal exploité.","E",2],
+  ["Le manque de consignes claires ou l'obligation de réinventer sans cesse les règles du jeu.","R",2]]},
+ {q:"Si tu devais imaginer ton métier idéal dans dix ans, lequel de ces rôles te correspondrait le mieux ?",o:[
+  ["Directeur artistique, graphiste, illustrateur ou motion designer, indépendant ou en agence.","G",2],
+  ["Designer d'objets, architecte d'intérieur ou créateur de mobilier éco-responsable.","O",2],
+  ["Styliste, coloriste, designer textile ou responsable de collection.","T",2],
+  ["Scénographe d'événements, régisseur artistique, organisateur de salons ou de festivals.","E",2],
+  ["Éducateur, assistant social, conseiller de vente spécialisé ou gestionnaire de structure.","R",2]]},
+ {q:"Quel est ton rapport spontané à l'outil informatique et numérique ?",o:[
+  ["J'adore explorer les logiciels de création graphique (suite Adobe, 2D, montage vidéo, animation).","G",2],
+  ["J'utilise la modélisation 3D (Rhino, Blender, SketchUp) avec plaisir pour donner vie à mes projets d'objets ou d'espaces.","O",2],
+  ["Je m'intéresse aux innovations textiles connectées ou aux logiciels de motifs et de tissage numérique.","T",2],
+  ["J'utilise le numérique pour concevoir des plans de feux, des simulations de parcours ou des présentations dynamiques.","E",2],
+  ["Je préfère les outils bureautiques classiques (traitement de texte, tableur) et la communication directe avec les gens.","R",2]]},
+ {q:"Comment envisages-tu la couleur dans tes projets ?",o:[
+  ["Comme un outil de hiérarchisation de l'information, de lisibilité et d'identité visuelle de marque.","G",2],
+  ["Comme une mise en valeur des volumes, des lignes de force d'un produit ou d'une architecture.","O",2],
+  ["C'est le cœur de mon travail : je cherche les harmonies subtiles, les contrastes et les teintes naturelles ou industrielles.","T",2],
+  ["Comme un créateur d'ambiance globale, de signalétique et d'immersion pour un public dans un lieu donné.","E",2],
+  ["Je n'ai pas d'affinité particulière avec la recherche de couleurs : je cherche surtout l'efficacité.","R",2]]},
+ {q:"Face à une critique négative d'un enseignant sur ton projet en cours, quelle est ta réaction ?",o:[
+  ["Je reprends la mise en page, je change de police ou je réorganise mes blocs de texte et d'images.","G",1],
+  ["Je revois la structure porteuse, les proportions ou le choix du matériau de construction.","O",1],
+  ["Je modifie l'échantillon, je retravaille la texture ou je change de gamme de teintes.","T",1],
+  ["Je repense l'agencement global ou la manière dont le spectateur va vivre l'expérience.","E",1],
+  ["Je demande qu'on me dise précisément les modifications à faire pour que le travail réponde aux attentes.","R",1]]},
+ {q:"Quel domaine artistique ou culturel t'attire le plus en dehors des cours ?",o:[
+  ["La bande dessinée, le cinéma d'animation, l'art urbain (street art) et les affiches publicitaires.","G",2],
+  ["Le design industriel, le mobilier design des XXe et XXIe siècles, l'architecture contemporaine.","O",2],
+  ["La haute couture, les défilés, l'histoire du costume et les arts du fil traditionnels ou innovants.","T",2],
+  ["Le spectacle vivant, le théâtre, les installations artistiques immersives et les musées.","E",2],
+  ["Le bénévolat associatif, l'aide humanitaire, l'organisation d'événements sportifs ou la vente.","R",2]]},
+ {q:"Quelle est ta sensibilité face aux enjeux environnementaux (éco-conception, recyclage) ?",o:[
+  ["Je m'intéresse au graphisme éco-responsable (encres végétales, sobriété numérique, papier recyclé).","G",2],
+  ["Je veux concevoir des objets réparables, modulaires, fabriqués à partir de matériaux biosourcés ou recyclés.","O",2],
+  ["Je m'intéresse à l'upcycling vestimentaire, aux fibres naturelles, aux teintures végétales et à l'économie circulaire textile.","T",2],
+  ["Je réfléchis à la réduction des déchets dans l'événementiel et à la réutilisation des décors de salon.","E",2],
+  ["Je me sens plus concerné(e) par l'impact social, l'aide aux personnes vulnérables ou le commerce équitable de proximité.","R",2]]},
+ {q:"Comment décrirais-tu ton trait ou ton habileté manuelle en atelier ?",o:[
+  ["Précis, orienté vers la mise en page, le tracé géométrique net et l'illustration soignée.","G",2],
+  ["À l'aise dans le volume, le collage rigoureux, la découpe de carton plume, de bois ou de mousse.","O",2],
+  ["Habile pour les assemblages minutieux, les coutures, les tressages et les textures tactiles.","T",2],
+  ["Bon(ne) pour la vision d'ensemble de l'espace, les maquettes d'implantation à l'échelle et la mise en scène.","E",2],
+  ["Moins intéressé(e) par la pratique plastique pure, je préfère l'argumentation orale, l'organisation ou la rédaction.","R",2]]},
+ {q:"Quel type de stage ou d'immersion professionnelle te motiverait le plus ?",o:[
+  ["Dans une agence de communication visuelle, une maison d'édition ou un studio de webdesign.","G",2],
+  ["Dans un atelier d'ébénisterie, de design de mobilier ou un bureau d'études en design industriel.","O",2],
+  ["Dans un atelier de couture, une maison de haute couture ou un laboratoire de recherche sur les matériaux.","T",2],
+  ["Dans une agence de scénographie, un théâtre, un musée ou une entreprise d'événementiel.","E",2],
+  ["Dans une structure de service à la personne, un commerce, une banque ou une administration.","R",2]]},
+ {q:"Quel est ton rapport à la théorie et à l'histoire de l'art et du design ?",o:[
+  ["J'aime analyser les affiches historiques, l'histoire de la typographie et l'évolution des codes visuels de la publicité.","G",2],
+  ["Je m'intéresse aux grands mouvements architecturaux (Bauhaus, modernisme) et aux innovations industrielles.","O",2],
+  ["J'aime étudier l'histoire de la mode, l'évolution des costumes à travers les âges et l'anthropologie du vêtement.","T",2],
+  ["Je m'intéresse aux évolutions de la mise en scène théâtrale et à l'histoire des grandes expositions universelles.","E",2],
+  ["Je préfère les enseignements concrets, ancrés dans le réel et tournés vers l'action plutôt que la théorie.","R",2]]},
+ {q:"Dans un travail de groupe, quel rôle prends-tu le plus souvent ?",o:[
+  ["Je prends en charge la mise en forme du dossier final, la charte graphique et la présentation visuelle.","G",2],
+  ["Je m'occupe de la fabrication des prototypes et de la solidité de la maquette présentée au jury.","O",2],
+  ["Je gère les aspects esthétiques liés aux textures, aux échantillons de matières et à l'harmonie des couleurs.","T",2],
+  ["Je coordonne le timing, la répartition des rôles et la mise en espace de la présentation orale.","E",2],
+  ["Je m'occupe plutôt de la logistique, du budget ou du contact avec les partenaires extérieurs.","R",2]]},
+ {q:"Qu'est-ce qui te procure le plus de fierté lorsque tu termines un projet ?",o:[
+  ["Voir que le message est compris au premier coup d'œil grâce à une belle composition graphique.","G",2],
+  ["Toucher un objet fini, fonctionnel, robuste et élégant que l'on peut manipuler.","O",2],
+  ["Sentir la richesse tactile d'une matière travaillée avec soin et originalité.","T",2],
+  ["Voir le public captivé par l'ambiance et la mise en scène globale que nous avons imaginée.","E",2],
+  ["Avoir résolu un problème pratique concret ou aidé des personnes à collaborer efficacement.","R",2]]},
+ {q:"Quels adjectifs qualifient le mieux ton style de créativité ?",o:[
+  ["Épuré, graphique, percutant, structuré ou narratif.","G",2],
+  ["Fonctionnel, ergonomique, constructif, volumétrique.","O",2],
+  ["Sensoriel, tactile, chromatique, texturé, souple.","T",2],
+  ["Spatial, théâtral, immersif, rythmé, contextuel.","E",2],
+  ["Rigoureux, méthodique, relationnel, pragmatique, ancré.","R",2]]},
+ {q:"Pour un projet sur le thème de « l'eau », tu choisirais de l'aborder par :",o:[
+  ["La création d'une campagne de sensibilisation visuelle sous forme d'affiches animées et de pictogrammes.","G",2],
+  ["Le design d'un objet innovant de récupération d'eau de pluie pour les balcons urbains.","O",2],
+  ["Le travail de textiles imperméables innovants ou de teintures naturelles à base de plantes aquatiques.","T",2],
+  ["La scénographie d'un parcours immersif sur la rareté de l'eau, dans une salle obscure.","E",2],
+  ["L'analyse des besoins en eau potable d'une population ou la gestion logistique d'un réseau de distribution.","R",2]]},
+ {q:"Quelle est ta position face au dessin à main levée et au croquis d'observation ?",o:[
+  ["J'aime dessiner des lettrages, des croquis d'interfaces (UI/UX), des storyboards et des illustrations vectorielles.","G",2],
+  ["Je privilégie les croquis d'intention en perspective, les schémas techniques et les volumes cotés.","O",2],
+  ["Je réalise des croquis de drapés, des planches de tendances texturées et des motifs répétés.","T",2],
+  ["Je fais des croquis d'espaces, des plans de masse, des vues d'ensemble et des esquisses de parcours.","E",2],
+  ["Je ne suis pas très à l'aise avec le dessin : je préfère l'écrit, le schéma logique ou la parole.","R",2]]},
+ {q:"Comment vis-tu le contact avec le public lors de la présentation de tes projets ?",o:[
+  ["C'est l'occasion de vérifier si mon message visuel est clair et percutant sans avoir à tout réexpliquer.","G",2],
+  ["J'aime expliquer comment l'objet fonctionne, comment on le prend en main et quels choix techniques j'ai faits.","O",2],
+  ["J'aime faire toucher les matières, expliquer l'origine des fibres et faire ressentir le textile.","T",2],
+  ["J'adore mettre en scène l'oral, utiliser l'espace de la classe et créer une vraie mise en situation.","E",2],
+  ["Je préfère un échange direct, argumenté, centré sur l'utilité concrète du projet pour l'usager ou le client.","R",2]]},
+ {q:"Quel type de contrainte technique te semble le plus stimulant à surmonter ?",o:[
+  ["Respecter une grille de mise en page stricte tout en créant une surprise visuelle.","G",2],
+  ["Intégrer des contraintes mécaniques, de résistance des matériaux et d'ergonomie dans un objet.","O",2],
+  ["Faire face aux réactions d'une teinture ou aux difficultés d'assemblage d'un tissu récalcitrant.","T",2],
+  ["M'adapter à un lieu exigu ou contraignant pour y installer une scénographie réussie.","E",2],
+  ["Respecter un budget strict, un cahier des charges ou un planning de réalisation rigoureux.","R",2]]},
+ {q:"Quel domaine technologique ou scientifique t'interpelle le plus en lien avec le design ?",o:[
+  ["L'ergonomie des interfaces numériques (UX/UI) et l'intelligence artificielle générative au service de l'image.","G",2],
+  ["La science des matériaux (composites, éco-matériaux) et la fabrication additive (impression 3D).","O",2],
+  ["Les fibres intelligentes, les textiles techniques et la chimie des colorants.","T",2],
+  ["L'acoustique, l'éclairage scénique et les technologies de projection immersive.","E",2],
+  ["La gestion de projet, la comptabilité, le droit de la consommation ou la psychologie.","R",2]]},
+ {q:"Qu'est-ce qui caractérise le mieux ton rythme de travail personnel ?",o:[
+  ["Je peux passer des heures à fignoler les détails d'un visuel, l'alignement d'un texte ou les calques d'une image.","G",2],
+  ["Je fonctionne par phases : construction, test de prototypes et retouches manuelles régulières.","O",2],
+  ["Je prends le temps de manipuler la matière, d'observer les nuances et d'ajuster les teintes avec patience.","T",2],
+  ["J'ai besoin d'une vision d'ensemble rapide pour structurer l'espace avant de m'attarder sur les détails.","E",2],
+  ["Je suis très méthodique : j'aime planifier mon travail à l'avance et le terminer sans précipitation.","R",2]]},
+ {q:"Comment envisages-tu ta future vie professionnelle ?",o:[
+  ["En agence de design graphique, en télétravail partiel, ou comme graphiste indépendant (freelance).","G",2],
+  ["Dans un bureau d'études, une entreprise de fabrication de mobilier, ou comme designer intégré à une entreprise.","O",2],
+  ["Dans l'industrie textile, la mode, la décoration d'intérieur ou le conseil en tendances.","T",2],
+  ["Dans une agence d'événementiel, un lieu culturel ou le service communication d'une collectivité.","E",2],
+  ["Dans des secteurs stables (commerce, management, aide à la personne, services, administration).","R",2]]},
+ {q:"Si ton professeur te propose de choisir le sujet de ton projet personnel, tu t'orientes vers :",o:[
+  ["La création de l'identité visuelle complète d'un festival fictif ou d'une marque engagée.","G",2],
+  ["La refonte d'un objet du quotidien mal conçu pour le rendre ergonomique et durable.","O",2],
+  ["Une collection capsule de vêtements ou d'accessoires éco-responsables à base de matières recyclées.","T",2],
+  ["La scénographie d'un lieu abandonné transformé en espace culturel éphémère.","E",2],
+  ["L'étude de faisabilité d'un service solidaire ou d'une petite entreprise éco-citoyenne.","R",2]]},
+ // ---- Partie 2 : profil d'études
+ {p:2,q:"Face à une consigne de projet artistique très ouverte et peu directive :",o:[
+  ["Je me sens tout de suite inspiré(e) : j'adore explorer des pistes multiples, je n'ai pas besoin de cadre strict.","L",2],
+  ["J'ai besoin d'un temps d'hésitation, mais je finis par trouver mon autonomie créative.","M",1],
+  ["Cela me stresse : je préfère quand les étapes et les attentes du correcteur sont clairement balisées.","C",2]]},
+ {p:2,q:"Quel est ton rapport à la rédaction et aux dossiers écrits ?",o:[
+  ["J'aime rédiger des argumentaires fouillés et documenter mes recherches historiques et culturelles sur plusieurs pages.","L",2],
+  ["Je rédige ce qui est demandé pour le dossier de projet, mais je préfère nettement la production plastique et concrète.","M",1],
+  ["J'ai du mal à rédiger de longs textes ; je suis beaucoup plus efficace dans l'action concrète, technique ou pratique.","C",2]]},
+ {p:2,q:"Comment te projettes-tu dans la durée de tes études après le bac ?",o:[
+  ["Je suis prêt(e) à m'engager dans un cursus exigeant de 3 ans (DN MADE), voire 5 ans (DSAA, école supérieure d'art).","L",2],
+  ["Je vise un cursus de 3 ans maximum (BUT ou DN MADE), avec une entrée assez rapide dans la vie professionnelle.","M",1],
+  ["Je préfère un diplôme court et encadré en 2 ans (BTS) pour entrer rapidement dans la vie active.","C",2]]},
+ {p:2,q:"Quelle est ta capacité d'autonomie et d'organisation en dehors des heures de cours ?",o:[
+  ["Je gère mon travail personnel en totale autonomie et je cherche par moi-même des ressources.","L",2],
+  ["J'ai besoin d'un rappel des échéances de temps en temps, mais je sais fournir l'effort demandé.","M",1],
+  ["J'ai besoin d'un suivi régulier, d'un emploi du temps structuré et d'une présence motivante pour rester efficace.","C",2]]},
+ {p:2,q:"Face à un échec technique ou à un prototype qui ne fonctionne pas du premier coup :",o:[
+  ["Je prends du recul, j'analyse les causes et je tente plusieurs expérimentations différentes.","L",2],
+  ["Je demande conseil à l'enseignant pour corriger rapidement l'erreur et avancer.","M",1],
+  ["Je me décourage si je n'ai pas la solution tout de suite ; j'ai besoin d'un mode opératoire clair.","C",2]]},
+ {p:2,q:"Quelle importance accordes-tu à la recherche plastique expérimentale par rapport au produit fini ?",o:[
+  ["Le processus de recherche, les essais et la démarche comptent autant, voire plus, que le résultat final.","L",2],
+  ["Le processus est important, mais c'est la qualité du rendu final qui m'importe le plus.","M",1],
+  ["Seul le résultat final, fonctionnel et propre, compte ; les recherches intermédiaires m'ennuient.","C",2]]}
+];
+
+/* Pistes de formations croisées : pôle x profil (C = court/encadré, M = équilibré, L = long/autonome) */
+const PISTES = {
+  G:{metiers:"graphiste, directeur·rice artistique, illustrateur·rice, motion designer, designer UX/UI",
+     C:["BTS Études de réalisation d'un projet de communication (ERPC)","BTS Communication","BTS en alternance dans une agence ou une imprimerie"],
+     M:["BUT Métiers du multimédia et de l'internet (MMI)","BUT Information-communication","DN MADE mention Graphisme ou Numérique"],
+     L:["DN MADE mention Graphisme, Numérique, Livre ou Animation","Puis DSAA ou master en design graphique","Écoles supérieures d'art (DNA puis DNSEP)"]},
+  O:{metiers:"designer produit, architecte d'intérieur, designer de mobilier, maquettiste, agenceur·se",
+     C:["BTS Étude et réalisation d'agencement (ERA)","BTS en alternance dans un bureau d'études ou un atelier","Formations aux métiers d'art du bois ou du métal"],
+     M:["BUT Packaging, emballage et conditionnement","DN MADE mention Objet ou Espace","Licence professionnelle après un BTS"],
+     L:["DN MADE mention Objet, Espace ou Matériaux","Puis DSAA design produit ou design d'espace","École nationale supérieure d'architecture (ENSA)"]},
+  T:{metiers:"styliste, modéliste, designer textile, coloriste, chef·fe de produit mode",
+     C:["BTS Métiers de la mode – vêtements","BTS Métiers de la mode – chaussure et maroquinerie","BTS Innovation textile"],
+     M:["DN MADE mention Mode ou Matériaux","BTS mode puis licence professionnelle","Formations en alternance chez un fabricant"],
+     L:["DN MADE mention Mode ou Matériaux","Puis DSAA mode et environnement ou master","Écoles supérieures d'art ou de mode"]},
+  E:{metiers:"scénographe, chargé·e de projet événementiel, décorateur·rice, régisseur·se, muséographe",
+     C:["BTS Communication","BTS Tourisme (pour l'organisation d'événements)","BTS en alternance dans une agence événementielle"],
+     M:["BUT Information-communication","DN MADE mention Événement ou Spectacle","Licence professionnelle en événementiel"],
+     L:["DN MADE mention Événement, Spectacle ou Espace","Puis DSAA design d'espace ou master scénographie","Écoles supérieures d'art, écoles de théâtre (scénographie)"]},
+  R:{metiers:"commercial·e, conseiller·ère, éducateur·rice, gestionnaire, chargé·e de communication",
+     C:["BTS Négociation et digitalisation de la relation client (NDRC)","BTS Management commercial opérationnel (MCO)","BTS Services et prestations des secteurs sanitaire et social (SP3S)"],
+     M:["BUT Techniques de commercialisation","BUT Carrières sociales","BUT Gestion des entreprises et des administrations (GEA)"],
+     L:["Licence à l'université (sciences de l'éducation, AES, langues…)","Formations paramédicales ou sociales (sur concours ou Parcoursup)","Écoles de commerce après un BTS ou un BUT"]}
+};
+const PROFILS = {
+  L:{name:"Études longues et autonomes", color:"#D94A22",
+     txt:"Tu sembles à l'aise avec l'autonomie, la recherche et l'écrit. Un cursus de 3 ans comme le DN MADE, avec une possible poursuite (DSAA, master, école supérieure d'art), correspond à ce profil."},
+  M:{name:"Profil polyvalent", color:"#117F7D",
+     txt:"Tu as besoin d'un peu de cadre mais tu sais devenir autonome. Un BUT (3 ans) ou un DN MADE avec un bon accompagnement sont des pistes adaptées. Un BTS suivi d'une poursuite d'études est aussi possible."},
+  C:{name:"Études courtes et encadrées", color:"#1D1F3B",
+     txt:"Tu sembles préférer le concret, un cadre clair et un suivi régulier. Un BTS (2 ans), éventuellement en alternance, est une piste adaptée. Après un BTS, il reste possible de poursuivre (licence professionnelle, bachelor)."}
+};
+const MAXPOLE = Q.slice(0,24).reduce((a,q)=>a+q.o[0][2],0); // 47
+
+/* ============ ÉTAT ============ */
+const S = {step:"home", i:0, ans:Array(Q.length).fill(null), nom:"", prenom:"", order:[]};
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+S.order = Q.map(q=> q.p===2 ? q.o.map((_,k)=>k) : shuffle(q.o.map((_,k)=>k)));
+const app = document.getElementById("app");
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ============ VUES ============ */
+function home(){
+  app.innerHTML = `
+  <section class="card">
+    <h1>Quelles études après mon bac STD2A ?</h1>
+    <p class="lead">Ce test t'aide à repérer les domaines de création qui t'attirent le plus et le type d'études qui pourrait te convenir. Il n'y a pas de bonne ou de mauvaise réponse : réponds spontanément, en pensant à ce que tu ressens vraiment.</p>
+    <div class="info"><span class="chip">30 questions</span><span class="chip">≈ 15 minutes</span><span class="chip">Synthèse en PDF à la fin</span></div>
+    <div class="row">
+      <div><label class="fld" for="prenom">Prénom</label><input type="text" id="prenom" autocomplete="off" value="${esc(S.prenom)}"></div>
+      <div><label class="fld" for="nom">Nom</label><input type="text" id="nom" autocomplete="off" value="${esc(S.nom)}"></div>
+    </div>
+    <div class="actions"><span></span><button class="btn" id="go">Commencer le test</button></div>
+  </section>`;
+  document.getElementById("go").onclick = ()=>{
+    S.prenom = document.getElementById("prenom").value.trim();
+    S.nom = document.getElementById("nom").value.trim();
+    S.step="q"; S.i = Math.max(0, S.ans.findIndex(a=>a===null)); if(S.i<0) S.i=0; render();
+  };
+}
+
+function question(){
+  const q = Q[S.i], ord = S.order[S.i], letters = "ABCDE";
+  const done = S.ans.filter(a=>a!==null).length;
+  const part = q.p===2 ? "Partie 2 · Ma façon de travailler" : "Partie 1 · Mes affinités créatives";
+  app.innerHTML = `
+  <div class="prog"><span>Question ${S.i+1} sur ${Q.length}</span><span>${done} réponse${done>1?"s":""}</span></div>
+  <div class="bar"><i style="width:${(S.i)/Q.length*100}%"></i></div>
+  <section class="card">
+    <div class="part">${part}</div>
+    <p class="qtext" id="qt">${esc(q.q)}</p>
+    <div class="opts" role="radiogroup" aria-labelledby="qt">
+      ${ord.map((k,pos)=>`<button class="opt" role="radio" aria-checked="${S.ans[S.i]===k}" data-k="${k}"><span class="l">${letters[pos]}</span><span>${esc(q.o[k][0])}</span></button>`).join("")}
+    </div>
+    <div class="actions">
+      <button class="ghost" id="prev">${S.i===0?"Accueil":"← Précédente"}</button>
+      <button class="btn" id="next" ${S.ans[S.i]===null?"disabled":""}>${S.i===Q.length-1?"Voir ma synthèse":"Suivante →"}</button>
+    </div>
+    <p class="hint">Astuce : touches 1 à ${ord.length} pour choisir, Entrée pour continuer.</p>
+  </section>`;
+  app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+    S.ans[S.i]=+b.dataset.k;
+    app.querySelectorAll(".opt").forEach(x=>x.setAttribute("aria-checked", x===b));
+    document.getElementById("next").disabled=false;
+    setTimeout(next, 280);
+  });
+  document.getElementById("prev").onclick = ()=>{ if(S.i===0){S.step="home";} else S.i--; render(); };
+  document.getElementById("next").onclick = next;
+}
+function next(){
+  if(S.ans[S.i]===null) return;
+  if(S.i < Q.length-1){ S.i++; render(); }
+  else { const miss = S.ans.findIndex(a=>a===null); if(miss>=0){S.i=miss;render();} else {S.step="res"; render();} }
+}
+document.addEventListener("keydown", e=>{
+  if(S.step!=="q" || e.target.tagName==="INPUT") return;
+  const n = parseInt(e.key,10), ord = S.order[S.i];
+  if(n>=1 && n<=ord.length){ const b = app.querySelectorAll(".opt")[n-1]; if(b) b.click(); }
+  if(e.key==="Enter" && S.ans[S.i]!==null) next();
+});
+
+/* ============ CALCUL ============ */
+function compute(){
+  const sc = {G:0,O:0,T:0,E:0,R:0}, pr = {L:0,M:0,C:0};
+  Q.forEach((q,i)=>{ const o=q.o[S.ans[i]]; if(q.p===2) pr[o[1]]+=o[2]; else sc[o[1]]+=o[2]; });
+  const creative = ["G","O","T","E"].sort((a,b)=>sc[b]-sc[a]);
+  const top = creative[0], second = creative[1];
+  const profil = pr.L>=8 ? "L" : pr.C>=8 ? "C" : "M";
+  // niveau d'affinité du pôle dominant
+  let niveau, phrase;
+  if(sc[top]>24){ niveau="forte"; phrase=`Tu as une forte affinité avec le pôle ${POLES[top].name}.`; }
+  else if(sc[top]>=15){ niveau="nette"; phrase=`Le pôle ${POLES[top].name} ressort nettement, avec un intérêt aussi pour ${POLES[second].name}.`; }
+  else { niveau="dispersée"; phrase=`Tes réponses sont réparties entre plusieurs pôles : ton projet créatif est encore ouvert, et c'est normal en 1re.`; }
+  const alerte = sc.R>12;
+  const reoDominant = sc.R>sc[top];
+  // repère profil : 0 (long) -> 1 (court)
+  const pos = (pr.C - pr.L + 12) / 24;
+  return {sc, pr, top, second, profil, niveau, phrase, alerte, reoDominant, pos};
+}
+
+function pistes(r){
+  const base = r.reoDominant ? "R" : r.top;
+  return {pole:base, list:PISTES[base][r.profil], metiers:PISTES[base].metiers, second: r.reoDominant? r.top : r.second};
+}
+
+function result(){
+  const r = compute(), p = pistes(r), who = [S.prenom,S.nom].filter(Boolean).join(" ") || "Élève de 1re STD2A";
+  const order = ["G","O","T","E","R"];
+  app.innerHTML = `
+  <section class="res-head">
+    <div class="who">${esc(who)} · ${new Date().toLocaleDateString("fr-FR")}</div>
+    <h1>Ma synthèse d'orientation</h1>
+    <span class="tag" style="background:${POLES[p.pole].color};color:#fff">${POLES[p.pole].name}</span>
+    <span class="tag" style="background:#fff;color:var(--ink)">${PROFILS[r.profil].name}</span>
+  </section>
+  <div class="grid2">
+    <section class="card">
+      <h2>Mes affinités par domaine</h2>
+      ${order.map(k=>`<div class="pole"><div class="t"><span>${POLES[k].name}</span><span>${Math.round(r.sc[k]/MAXPOLE*100)} %</span></div><div class="tr"><i style="width:${r.sc[k]/MAXPOLE*100}%;background:${POLES[k].color}"></i></div></div>`).join("")}
+      <p class="small" style="margin-top:12px">Pourcentage des points possibles dans chaque domaine.</p>
+    </section>
+    <section class="card">
+      <h2>Mon profil d'études</h2>
+      <div class="scale">${["L","M","C"].map(k=>`<div class="${r.profil===k?"on":""}" style="${r.profil===k?`background:${PROFILS[k].color}`:""}">${k==="L"?"Long et autonome":k==="M"?"Polyvalent":"Court et encadré"}</div>`).join("")}</div>
+      <p style="margin-top:12px">${PROFILS[r.profil].txt}</p>
+    </section>
+  </div>
+  <section class="card sec">
+    <h2>Ce que disent mes réponses</h2>
+    <p>${esc(r.phrase)}</p>
+    ${r.alerte ? `<div class="alert"><strong>À discuter :</strong> plusieurs de tes réponses montrent un intérêt pour les métiers de la relation humaine, du commerce ou de la gestion. ${r.niveau==="forte" ? "Ton goût pour la création reste très présent : ces deux envies peuvent se combiner (communication, médiation culturelle, gestion de projets créatifs)." : "Ce n'est pas un problème : c'est une piste à explorer avec ton professeur principal ou la Psy-EN, y compris vers des formations non artistiques."}</div>` : ""}
+    <h2 style="margin-top:18px">Pistes de formations à explorer</h2>
+    <ul class="pl">${p.list.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+    <p><strong>Exemples de métiers :</strong> ${esc(p.metiers)}.</p>
+    <p class="small">Autre domaine à garder en tête : ${esc(POLES[p.second].name)}.</p>
+    <h2 style="margin-top:18px">Mes prochaines étapes</h2>
+    <ul class="pl">
+      <li>Consulter les fiches de ces formations sur Parcoursup et onisep.fr (attendus, taux d'accès).</li>
+      <li>Visiter au moins deux journées portes ouvertes ou salons cette année.</li>
+      <li>Garder mes meilleurs travaux pour constituer mon portfolio.</li>
+      <li>En parler avec mon professeur principal ou la Psy-EN.</li>
+    </ul>
+    <p class="small">Ce test est un outil de réflexion, pas une décision : tes goûts et ton projet vont encore évoluer.</p>
+    <div class="actions noprint">
+      <button class="ghost" id="redo">Modifier mes réponses</button>
+      <button class="btn" id="pdf">Télécharger ma synthèse en PDF</button>
+    </div>
+    <div class="msg noprint" id="msg" role="status"></div>
+  </section>`;
+  document.getElementById("redo").onclick=()=>{S.step="q";S.i=0;render();};
+  document.getElementById("pdf").onclick=()=>exportPDF(r,p,who);
+}
+
+/* ============ PDF ============ */
+function clean(s){return String(s).replace(/œ/g,"oe").replace(/Œ/g,"OE").replace(/[’‘]/g,"'").replace(/[–—]/g,"-").replace(/…/g,"...").replace(/≥/g,">=").replace(/→/g,"->").replace(/·/g,"-").replace(/ | /g," ");}
+function hex(h){return [parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];}
+
+async function exportPDF(r,p,who){
+  const msg = document.getElementById("msg");
+  if(!(window.jspdf && window.jspdf.jsPDF)){ msg.textContent="Le générateur PDF n'a pas pu se charger (connexion internet ?). Utilise Ctrl+P puis « Enregistrer au format PDF »."; try{window.print();}catch(e){} return; }
+  const doc = new window.jspdf.jsPDF({unit:"mm",format:"a4"});
+  const W=210, M=16; let y=0;
+  const ink=hex("#1D1F3B");
+  const text=(t,x,yy,o={})=>{doc.setFont("helvetica",o.bold?"bold":"normal");doc.setFontSize(o.size||11);doc.setTextColor(...(o.color||ink));doc.text(clean(t),x,yy,o.align?{align:o.align}:undefined);};
+  const para=(t,o={})=>{doc.setFont("helvetica",o.bold?"bold":"normal");doc.setFontSize(o.size||11);doc.setTextColor(...(o.color||ink));const lines=doc.splitTextToSize(clean(t),W-2*M-(o.indent||0));need(lines.length*5.2+2);doc.text(lines,M+(o.indent||0),y);y+=lines.length*5.2+(o.after??3);};
+  const need=(h)=>{if(y+h>282){doc.addPage();y=20;}};
+  const h2=(t)=>{need(14);y+=4;text(t,M,y,{bold:true,size:14,color:hex("#D94A22")});y+=7;};
+  const bullet=(t)=>{doc.setFont("helvetica","normal");doc.setFontSize(11);const lines=doc.splitTextToSize(clean(t),W-2*M-6);need(lines.length*5.2+1);doc.setFillColor(...hex("#117F7D"));doc.circle(M+1.5,y-1.3,0.9,"F");doc.setTextColor(...ink);doc.text(lines,M+6,y);y+=lines.length*5.2+1.5;};
+
+  // en-tête
+  doc.setFillColor(...ink); doc.rect(0,0,W,38,"F");
+  text("1re STD2A - TEST D'ORIENTATION",M,13,{bold:true,size:10,color:hex("#F6C12F")});
+  text("Ma synthèse d'orientation",M,24,{bold:true,size:20,color:[255,255,255]});
+  text(who+"  -  "+new Date().toLocaleDateString("fr-FR"),M,32,{size:11,color:hex("#C9CBE0")});
+  y=50;
+
+  // affinités
+  text("Mes affinités par domaine",M,y,{bold:true,size:14,color:hex("#D94A22")}); y+=8;
+  ["G","O","T","E","R"].forEach(k=>{
+    const pct=r.sc[k]/MAXPOLE;
+    text(POLES[k].name,M,y,{size:10.5});
+    doc.setFillColor(...hex("#F1F2F6")); doc.roundedRect(M+64,y-3.6,100,4.6,2.3,2.3,"F");
+    if(pct>0){doc.setFillColor(...hex(POLES[k].color)); doc.roundedRect(M+64,y-3.6,Math.max(4.6,100*pct),4.6,2.3,2.3,"F");}
+    text(Math.round(pct*100)+" %",W-M,y,{size:10.5,bold:true,align:"right"});
+    y+=8;
+  });
+
+  // profil
+  h2("Mon profil d'études");
+  const labs={L:"Long et autonome",M:"Polyvalent",C:"Court et encadré"}; const sw=(W-2*M)/3;
+  ["L","M","C"].forEach((k,i)=>{
+    const on=r.profil===k; doc.setFillColor(...(on?hex(PROFILS[k].color):hex("#F1F2F6")));
+    doc.rect(M+i*sw,y-5,sw-1,9,"F");
+    text(labs[k],M+i*sw+sw/2-0.5,y+0.8,{size:10.5,bold:on,color:on?[255,255,255]:hex("#4F546E"),align:"center"});
+  });
+  y+=11;
+  para(PROFILS[r.profil].txt);
+
+  // synthèse
+  h2("Ce que disent mes réponses");
+  para(r.phrase);
+  if(r.alerte){
+    const t = "À discuter : plusieurs réponses montrent un intérêt pour les métiers de la relation humaine, du commerce ou de la gestion. " + (r.niveau==="forte" ? "Le goût pour la création reste très présent : ces deux envies peuvent se combiner." : "C'est une piste à explorer avec le professeur principal ou la Psy-EN, y compris vers des formations non artistiques.");
+    doc.setFontSize(11); const lines=doc.splitTextToSize(clean(t),W-2*M-8); need(lines.length*5.2+8);
+    doc.setFillColor(...hex("#FDF3D3")); doc.roundedRect(M,y-4.5,W-2*M,lines.length*5.2+5,2,2,"F");
+    doc.setFont("helvetica","normal"); doc.setTextColor(...ink); doc.text(lines,M+4,y); y+=lines.length*5.2+5;
+  }
+  h2("Pistes de formations à explorer");
+  p.list.forEach(bullet);
+  y+=1; para("Exemples de métiers : "+p.metiers+".");
+  para("Autre domaine à garder en tête : "+POLES[p.second].name+".",{color:hex("#4F546E")});
+
+  h2("Mes prochaines étapes");
+  ["Consulter les fiches de ces formations sur Parcoursup et onisep.fr (attendus, taux d'accès).","Visiter au moins deux journées portes ouvertes ou salons cette année.","Garder mes meilleurs travaux pour constituer mon portfolio.","En parler avec mon professeur principal ou la Psy-EN."].forEach(bullet);
+
+  h2("Mes remarques");
+  for(let i=0;i<3;i++){ need(9); y+=6; doc.setDrawColor(...hex("#C9CBE0")); doc.setLineDashPattern([0.8,1.2],0); doc.line(M,y,W-M,y); }
+  doc.setLineDashPattern([],0);
+  y+=10; para("Ce test est un outil de réflexion, pas une décision : les goûts et le projet évoluent encore.",{size:9.5,color:hex("#4F546E")});
+
+  const fname = clean("Synthese_orientation_"+(S.prenom||"eleve")+(S.nom?"_"+S.nom:"")).normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^\w\-]+/g,"_")+".pdf";
+  const blob = doc.output("blob");
+  // Dans claude.ai : téléchargement via la capacité "downloads" ; ailleurs (ENT, fichier local) : téléchargement direct
+  let dl = null;
+  try{ if(window.claude && typeof window.claude.use==="function"){ dl = await Promise.race([window.claude.use("downloads"), new Promise(res=>setTimeout(()=>res(null),1500))]); } }catch(e){ dl=null; }
+  if(dl){
+    try{ await dl.save({filename:fname, data:blob}); msg.textContent="PDF enregistré."; }
+    catch(e){ msg.textContent = e && e.code==="declined" ? "Téléchargement annulé." : "Le téléchargement n'est pas possible ici."; }
+  } else {
+    try{ doc.save(fname); msg.textContent="PDF téléchargé : "+fname; }
+    catch(e){ msg.textContent="Téléchargement impossible : utilise Ctrl+P puis « Enregistrer au format PDF »."; }
+  }
+}
+
+function render(){ if(S.step==="home") home(); else if(S.step==="q") question(); else result(); window.scrollTo(0,0); }
+render();
+</script>
+</body>
+</html>
